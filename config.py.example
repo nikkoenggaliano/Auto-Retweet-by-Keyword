@@ -1,0 +1,11 @@
+config = {
+	'blacklist_word' : r"fuck|sucks|porn|fucker|idiot|porn|dumb|whore|bitch|slut|dick|vagina|motherfucker|kontol|memek|lonte|tolol|goblok|tetek",
+	'match_word' : r"imnayeon|nayeon",
+	'minimum_account_follower' : 150,
+	'minimum_text_after_deleted_keyword' : 10,
+	'language_allowed' : ['id', 'en', 'ja', 'ks', 'kg', 'tl'],
+	'consumer_key': "",
+	'consumer_secret': "",
+	'access_token': "", 
+	'access_token_secret': ""
+}
