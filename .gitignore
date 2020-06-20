@@ -3,4 +3,4 @@ db.py
 *.txt
 *.json
 __pycache__/*
-/__pycache__/
+/__pycache__/*
