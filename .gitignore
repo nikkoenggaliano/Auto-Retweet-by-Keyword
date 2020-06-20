@@ -2,3 +2,4 @@ config.py
 db.py
 *.txt
 *.json
+__pycache__*
