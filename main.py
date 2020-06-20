@@ -86,12 +86,10 @@ class MyListener(tweepy.StreamListener):
 
 									try:
 										api.retweet(final_data['id_tweet'])
-										print("\n")
-										print("*"*20)
-										print(deleted_string, len(deleted_string), raw_tweet)
+										print("*"*30)
+										print("After deleted string len is {}".format(len(deleted_string)))
 										print("Retweeted tweet id {}".format(final_data['id_tweet']))
-										print("*"*20)
-										print("\n")
+										print("*"*30)
 										sleep(random.randint(1,6))
 										self.write_to_file(file='id_loged.txt', data=final_data['id_tweet']+ "\n", mode='a')
 
@@ -102,13 +100,11 @@ class MyListener(tweepy.StreamListener):
 										print(e)
 										pass
 								else:
-									print("\n")
-									print("#"*20)
+									print("#"*30)
 									print(raw_tweet)
 									print("Tweet tidak berbahasa Indonesia/Inggirs/Korea/Jepang")
 									print("Bahasa yang dideteksi [{}]".format(detectlang))
-									print("#"*20)
-									print("\n")
+									print("#"*30)
 									pass
 
 							else:
@@ -120,12 +116,10 @@ class MyListener(tweepy.StreamListener):
 							pass
 
 				else:
-					print("\n")
-					print("$"*15)
+					print("$"*30)
 					print(raw_tweet)
 					print("Ada kata kata kasar ih :(")
-					print("$"*15)
-					print("\n")
+					print("$"*30)
 					pass
 
 			else:
@@ -133,10 +127,10 @@ class MyListener(tweepy.StreamListener):
 				pass
 
 		else:
-			print("-"*15)
+			print("-"*30)
 			print(raw_tweet)
 			print("Gak match sama keyword!")
-			print("-"*15)
+			print("-"*30)
 			pass
 
 
