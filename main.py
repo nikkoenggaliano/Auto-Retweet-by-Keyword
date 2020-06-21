@@ -18,8 +18,13 @@ keys = dict(
 auth = tweepy.OAuthHandler(keys['consumer_key'], keys['consumer_secret'])
 auth.set_access_token(keys['access_token'], keys['access_token_secret'])
 api = tweepy.API(auth)
+
 black_list_word	= config['blacklist_word']
 keyword_match	= config['match_word']
+anti_number		= config['anti_number_start_end']
+
+
+
 print("Working Now!\n")
 
 class MyListener(tweepy.StreamListener):
@@ -69,7 +74,7 @@ class MyListener(tweepy.StreamListener):
 
 				if not re.search(black_list_word, raw_tweet, re.IGNORECASE):
 					
-					final_data.update({'status' : 'black_list_word'})
+					#final_data.update({'status' : 'black_list_word'})
 					#self.write_to_file(file='my_db.json', data=json.dumps(final_data)+"\n", mode='a')
 
 
@@ -82,23 +87,32 @@ class MyListener(tweepy.StreamListener):
 							if len(deleted_string) > minim_text:
 								#panjang memenuhi
 								
-								if detectlang in lang_allowed:
+								if detectlang in lang_allowed: #aman bahasanya
 
-									try:
-										api.retweet(final_data['id_tweet'])
-										print("*"*30)
-										print("After deleted string len is {}".format(len(deleted_string)))
-										print("Retweeted tweet id {}".format(final_data['id_tweet']))
-										print("*"*30)
-										sleep(random.randint(1,6))
-										self.write_to_file(file='id_loged.txt', data=final_data['id_tweet']+ "\n", mode='a')
+									if not re.search(anti_number, raw_tweet,  re.MULTILINE | re.IGNORECASE):
 
-									except tweepy.TweepError as e:
-										print(e.response.text)
-										pass
-									except Exception as e:
-										print(e)
-										pass
+										try:
+											api.retweet(final_data['id_tweet'])
+											print("*"*30)
+											print("After deleted string len is {}".format(len(deleted_string)))
+											print("Retweeted tweet id {}".format(final_data['id_tweet']))
+											print("*"*30)
+											sleep(random.randint(1,6))
+											self.write_to_file(file='id_loged.txt', data=final_data['id_tweet']+ "\n", mode='a')
+
+										except tweepy.TweepError as e:
+											print(e.response.text)
+											pass
+										except Exception as e:
+											print(e)
+											pass
+									
+									else:
+										print("%"*30)
+										print(deleted_string)
+										print("Ada number di awal atau di akhir")
+										print("%"*30)
+
 								else:
 									print("#"*30)
 									print(raw_tweet)
