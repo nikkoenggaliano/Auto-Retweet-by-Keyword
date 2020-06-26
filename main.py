@@ -101,7 +101,7 @@ class MyListener(tweepy.StreamListener):
 											self.write_to_file(file='id_loged.txt', data=final_data['id_tweet']+ "\n", mode='a')
 
 										except tweepy.TweepError as e:
-											print(e.response.text)
+											print(e)
 											pass
 										except Exception as e:
 											print(e)
