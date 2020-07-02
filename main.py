@@ -22,6 +22,7 @@ api = tweepy.API(auth)
 black_list_word	= config['blacklist_word']
 keyword_match	= config['match_word']
 anti_number		= config['anti_number_start_end']
+deleted_match	= config['deleted_word']
 
 
 
@@ -52,7 +53,7 @@ class MyListener(tweepy.StreamListener):
 
 		raw_tweet = final_data['tweet'] #raw tweet can be proccessed (string)
 		loc       = final_data['detail_user']['location'] #can be None response careful
-		deleted_string 	= re.sub(keyword_match, "",raw_tweet.lower() , re.IGNORECASE)
+		deleted_string 	= re.sub(deleted_match, "", raw_tweet.lower() , re.MULTILINE | re.IGNORECASE)
 		detectlang 		= ""
 
 		try:
@@ -63,7 +64,8 @@ class MyListener(tweepy.StreamListener):
 			detectlang = "ep"
 			pass
 
-		if re.search(keyword_match, raw_tweet, re.IGNORECASE):
+		#jika match dengan keyword Nayeon / Im Nayeon
+		if re.search(keyword_match, raw_tweet, re.MULTILINE | re.IGNORECASE):
 				
 			if final_data['detail_user']['followers_count'] >= minim_follower:
 
@@ -71,24 +73,29 @@ class MyListener(tweepy.StreamListener):
 				#self.write_to_file(file='my_db.json', data=json.dumps(final_data)+"\n", mode='a')
 				
 
-
-				if not re.search(black_list_word, raw_tweet, re.IGNORECASE):
+				#Jika tidak ada kata kasar
+				if not re.search(black_list_word, raw_tweet, re.MULTILINE | re.IGNORECASE):
 					
 					#final_data.update({'status' : 'black_list_word'})
 					#self.write_to_file(file='my_db.json', data=json.dumps(final_data)+"\n", mode='a')
 
-
+					#jika tweet sudah teretweet
 					if final_data['id_tweet'] not in id_already_retweeted:
 
+						#jika ada lokasi pada profil yang nge tweet
 						if loc is not None:
 							
 							#ada lokasi
 
-							if len(deleted_string) > minim_text:
+							#Jika tweetnya mempunyai panjang yang memenuhi
+							if len(deleted_string) > int(minim_text):
 								#panjang memenuhi
 								
 								if detectlang in lang_allowed: #aman bahasanya
 
+									#jika tidak ada nomer di awal atau di akhir
+									#10 Nayeon cantik
+									#Nayeon cantik 10
 									if not re.search(anti_number, raw_tweet,  re.MULTILINE | re.IGNORECASE):
 
 										try:
@@ -112,6 +119,7 @@ class MyListener(tweepy.StreamListener):
 										print(deleted_string)
 										print("Ada number di awal atau di akhir")
 										print("%"*30)
+										pass
 
 								else:
 									print("#"*30)
