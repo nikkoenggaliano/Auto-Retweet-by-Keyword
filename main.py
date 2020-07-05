@@ -37,10 +37,6 @@ class MyListener(tweepy.StreamListener):
 
 
 	def on_status(self, status):
-		try:
-			id_already_retweeted = open('id_loged.txt').read().split("\n")
-		except Exception as e:
-			self.write_to_file('id_loged.txt', '', 'a')
 
 		final_data = {
 			'id_tweet' : status.id_str,
@@ -76,66 +72,61 @@ class MyListener(tweepy.StreamListener):
 				#Jika tidak ada kata kasar
 				if not re.search(black_list_word, raw_tweet, re.MULTILINE | re.IGNORECASE):
 					
-					#final_data.update({'status' : 'black_list_word'})
-					#self.write_to_file(file='my_db.json', data=json.dumps(final_data)+"\n", mode='a')
+					if loc is not None:
+						
+						#ada lokasi
+						
+						self.write_to_file(file='my_db.json', data=json.dumps(deleted_string)+"\n", mode='a')
 
-					#jika tweet sudah teretweet
-					if final_data['id_tweet'] not in id_already_retweeted:
-
-						#jika ada lokasi pada profil yang nge tweet
-						if loc is not None:
+						#Jika tweetnya mempunyai panjang yang memenuhi
+						if len(deleted_string) > int(minim_text):
+							#panjang memenuhi
 							
-							#ada lokasi
+							if detectlang in lang_allowed: #aman bahasanya
 
-							#Jika tweetnya mempunyai panjang yang memenuhi
-							if len(deleted_string) > int(minim_text):
-								#panjang memenuhi
-								
-								if detectlang in lang_allowed: #aman bahasanya
+								#jika tidak ada nomer di awal atau di akhir
+								#10 Nayeon cantik
+								#Nayeon cantik 10
+								if not re.search(anti_number, raw_tweet,  re.MULTILINE | re.IGNORECASE):
 
-									#jika tidak ada nomer di awal atau di akhir
-									#10 Nayeon cantik
-									#Nayeon cantik 10
-									if not re.search(anti_number, raw_tweet,  re.MULTILINE | re.IGNORECASE):
-
-										try:
-											api.retweet(final_data['id_tweet'])
-											print("*"*30)
-											print("After deleted string len is {}".format(len(deleted_string)))
-											print("Retweeted tweet id {}".format(final_data['id_tweet']))
-											print("*"*30)
-											sleep(random.randint(1,6))
-											self.write_to_file(file='id_loged.txt', data=final_data['id_tweet']+ "\n", mode='a')
-
-										except tweepy.TweepError as e:
-											print(e)
-											pass
-										except Exception as e:
-											print(e)
-											pass
-									
-									else:
-										print("%"*30)
-										print(deleted_string)
-										print("Ada number di awal atau di akhir")
-										print("%"*30)
+									try:
+										api.retweet(final_data['id_tweet'])
+										print("*"*30)
+										print("After deleted string len is {}".format(len(deleted_string)))
+										print("Retweeted tweet id {}".format(final_data['id_tweet']))
+										print("*"*30)
+										# sleep(random.randint(1,6))
+										self.write_to_file(file='id_loged.txt', data=json.dumps({'id':final_data['id_tweet'], 'tweet':raw_tweet})+ "\n", mode='a')
+										# self.write
+									except tweepy.TweepError as e:
+										print(e)
 										pass
-
+									except Exception as e:
+										print(e)
+										pass
+								
 								else:
-									print("#"*30)
-									print(raw_tweet)
-									print("Tweet tidak berbahasa Indonesia/Inggirs/Korea/Jepang")
-									print("Bahasa yang dideteksi [{}]".format(detectlang))
-									print("#"*30)
+									print("%"*30)
+									print(deleted_string)
+									print("Ada number di awal atau di akhir")
+									print("%"*30)
 									pass
 
 							else:
-								print(raw_tweet, "Tidak cukup panjang!")
+								print("#"*30)
+								print(raw_tweet)
+								print("Tweet tidak berbahasa Indonesia/Inggirs/Korea/Jepang")
+								print("Bahasa yang dideteksi [{}]".format(detectlang))
+								print("#"*30)
 								pass
 
 						else:
-							print("Tidak ada lokasinya :(")
+							print(raw_tweet, "Tidak cukup panjang!")
 							pass
+
+					else:
+						print("Tidak ada lokasinya :(")
+						pass
 
 				else:
 					print("$"*30)
